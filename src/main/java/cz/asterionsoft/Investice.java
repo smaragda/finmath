@@ -6,10 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 public class Investice {
-	private double vyse;
-	private int doba;
-	private double urok;
-	private double poplatekZaVedeni;
+	
+	private final double vyse;
+	private final int doba;
+	private final double urok;
+	private final double poplatekZaVedeni;
 	//private double dan; po trech letech se z akcii neplati dan
 	
 	// ------------- vypocet ----------------
