@@ -13,7 +13,7 @@ class OffsetInvestice {
 	}
 	
 	public double zisk() {
-		return investice.getAktualniVyse() - uver.getAktualniVyse() - uver.getZaplaceno();
+		return investice.getAktualniVyse() - investice.getVyse() - uver.getAktualniVyse() - uver.getZaplaceno();
 	}
 	
 	public void rok() {
@@ -23,9 +23,10 @@ class OffsetInvestice {
 	
 	@Override
 	public String toString() {
-		return "OffsetInvestice{" +
-				"uver=" + uver +
-				", investice=" + investice +
+		return "OffsetInvestice { "
+				+ "zisk (investice+uver celkem) = " + zisk()
+				+ ", uver=" + uver
+				+ ", investice=" + investice +
 				'}';
 	}
 	
@@ -42,4 +43,9 @@ class OffsetInvestice {
 	boolean isBreakEven(OffsetInvestice offsetInvestice) {
 		return offsetInvestice.investice.getZisk() - offsetInvestice.uver.getZaplacenoUrok() >= 0;
 	}
+	
+	boolean isBreakEven2(OffsetInvestice offsetInvestice) {
+		return zisk() >= 0;
+	}
+	
 }
