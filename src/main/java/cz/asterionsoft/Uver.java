@@ -9,7 +9,7 @@ public class Uver {
 	
 	private final double vyse;
 	private final int doba;
-	private final double urok;
+	private final double urokProcent;
 	private double splatka;
 	private double celkemBudeZaplaceno;
 	private final double poplatekZaVedeni;
@@ -17,15 +17,15 @@ public class Uver {
 	// ------------- vypocet ----------------
 	private double aktualniVyse;
 	private int aktualniMesic; //konec mesice
-	private double zaplaceno;
 	private double urokCelkem;
+	private double zaplacenoCelkem;
 	private double zaplacenoUrok;
 	private double zaplacenaJistina;
 	
-	public Uver(double vyse, int dobaMesicu, double urok, double poplatekZaVedeni) {
+	public Uver(double vyse, int dobaMesicu, double urokProcent, double poplatekZaVedeni) {
 		this.vyse = vyse;
 		this.doba = dobaMesicu;
-		this.urok = urok;
+		this.urokProcent = urokProcent;
 		this.poplatekZaVedeni = poplatekZaVedeni;
 		init();
 	}
@@ -42,11 +42,18 @@ public class Uver {
 			log.warn("Už jste splatil úvěr.");
 			return;
 		}
-		aktualniVyse = aktualniVyse - splatka + poplatekZaVedeni;
-		aktualniVyse = aktualniVyse + aktualniVyse * urok / 100 / 12;
-		zaplaceno = zaplaceno + splatka + poplatekZaVedeni;
-		zaplacenoUrok = zaplacenoUrok + aktualniVyse * urok / 100 / 12;
-		zaplacenaJistina = zaplacenaJistina + splatka - aktualniVyse * urok / 100 / 12;
+		double upravenaSplatka = splatka;
+		double zbyvaDoplatit = aktualniVyse - splatka + poplatekZaVedeni;
+		if (zbyvaDoplatit < splatka) {
+			upravenaSplatka = zbyvaDoplatit;    // posledni splatka
+		}
+		double urok = aktualniVyse * urokProcent / 100 / 12;
+		
+		aktualniVyse = aktualniVyse + urok;
+		aktualniVyse = aktualniVyse - upravenaSplatka + poplatekZaVedeni;
+		zaplacenoCelkem = zaplacenoCelkem + upravenaSplatka + poplatekZaVedeni;
+		zaplacenoUrok = zaplacenoUrok + urok;
+		zaplacenaJistina = zaplacenaJistina + upravenaSplatka - urok;
 	}
 	
 	void rok() {
@@ -56,7 +63,7 @@ public class Uver {
 	}
 	
 	double splatka() {
-		return vyse * urok / 100 / 12 / (1 - Math.pow(1 + urok / 100 / 12, -doba));
+		return vyse * urokProcent / 100 / 12 / (1 - Math.pow(1 + urokProcent / 100 / 12, -doba));
 	}
 	
 	
@@ -66,7 +73,7 @@ public class Uver {
 				"celkemBudeZaplaceno=" + celkemBudeZaplaceno +
 				", aktualniVyse=" + aktualniVyse +
 				", aktualniMesic=" + aktualniMesic +
-				", zaplaceno=" + zaplaceno +
+				", zaplaceno=" + zaplacenoCelkem +
 				", urokCelkem=" + urokCelkem +
 				", zaplacenoUrok=" + zaplacenoUrok +
 				", zaplacenaJistina=" + zaplacenaJistina +
